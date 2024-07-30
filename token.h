@@ -1,5 +1,6 @@
 #define MAXLENGTH 25
 #include<stdlib.h>
+#include<stdio.h>
 #ifndef TOKEN_H
 #define TOKEN_H
 typedef struct {
@@ -32,6 +33,12 @@ void freeLines(lines* Lines){
     }
 }
 //token stuff now
+typedef enum{
+    INDENTIFIER,
+    PLUS,
+    SEMICOLON,
+    NUMLITERAL,
+}TokenType;
 typedef struct{
     char input[MAXLENGTH];
     TokenType type;
@@ -43,6 +50,7 @@ typedef struct{
     int len;
  
 }Tokens;
+
 void initToken(Token* token){
     token->len=0;
     token->type=INDENTIFIER;
@@ -102,12 +110,7 @@ typedef enum{
     q6,// num literal accepting state
     qerror,//dont recognize
 }states;
-typedef enum{
-    INDENTIFIER,
-    PLUS,
-    SEMICOLON,
-    NUMLITERAL,
-}TokenType;
+
 void printTokens(Tokens* tokens) {
     for (int i = 0; i < tokens->len; i++) {
         printf("Token %d: %s (Type: %d)\n", i, tokens->input[i]->input, tokens->input[i]->type);
@@ -288,6 +291,9 @@ void sortLine(line* Line){
                 break;
             case qerror:
                 fputs("U dumbass u gave me a char that wasn't supported go f yourself",stderr);
+                
+                printf("The character is: %c\n", character);
+
                 freeTokens(&tokens);
 
                 exit(1);

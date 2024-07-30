@@ -19,7 +19,7 @@ closedStatement= openPar statement closedPar
 #include<stdio.h>
 #include<stdlib.h>
 #include "token.h"
-#define MAXLENGTH 100
+
 
 
 
@@ -70,7 +70,7 @@ int main(int argc,char* argv[]){
             }
         }   
     }
-    sortLines(Lines.stuff[0]);
+    sortLine(Lines.stuff[0]);
     
     freeLines(&Lines);
     
