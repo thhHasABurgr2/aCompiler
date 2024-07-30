@@ -1,4 +1,4 @@
-#define MAXLENGTH 100
+#define MAXLENGTH 25
 #include<stdlib.h>
 #ifndef TOKEN_H
 #define TOKEN_H
@@ -37,6 +37,7 @@ typedef struct{
     TokenType type;
     int len;
 }Token;
+
 typedef struct{
     Token* input[MAXLENGTH];
     int len;
@@ -44,7 +45,7 @@ typedef struct{
 }Tokens;
 void initToken(Token* token){
     token->len=0;
-    token->type=NULL;
+    token->type=INDENTIFIER;
 }
 void initTokens(Tokens* tokens){
     tokens->len=0;
@@ -82,6 +83,15 @@ int isFirstNum(Token* token){
     return 0;
 
 }
+void freeTokens(Tokens tokens){
+    for (int i = 0; i < tokens.len; i++) {
+        free(tokens.input[i]);
+    }
+}
+void Appendtoken(Tokens* tokens,Token* token){
+    tokens->input[tokens->len]=token;
+    tokens->len++;
+}
 typedef enum{
     q0,//start state
     q1,//on letter; can self loop, go to number, or go to identifier accepting state
@@ -94,8 +104,9 @@ typedef enum{
 }states;
 typedef enum{
     INDENTIFIER,
-    KEYWORD,
-    ESC,
+    PLUS,
+    SEMICOLON,
+    NUMLITERAL,
 }TokenType;
 void sortLine(line* Line){
     int count=0;
@@ -213,10 +224,40 @@ void sortLine(line* Line){
                 break;
 
             case q3:
+
+                token->type=INDENTIFIER;
                 Appendtoken(&tokens,token);
+                //add anything else for accepting states?
                 break;
+            case q4:
+
+                token->type=PLUS;
+                Appendtoken(&tokens,token);
+                //add anything else for accepting states?
+                break;
+            case q5:
+                token->type=SEMICOLON;
+                Appendtoken(&tokens,token);
+                //add anything else for accepting states?
+                break;
+            case q6:
+                token->type=NUMLITERAL;
+                Appendtoken(&tokens,token);
+                //add anything else for accepting states?
+                break;
+            case qerror:
+                fputs("U dumbass u gave me a char that wasn't supported go f yourself",stderr);
+
+                exit(1);
+                break;
+
         }
         character=Line->stuff[count];
+        if(state==q3||state==q4||state==q5||state==q6){//saying that when a state has reached its accpeting state, reset it back to the initial state. prob a better way to do this
+            state=q0;
+        }
+        
     }
+    freeTokens(tokens);
 }
 #endif
