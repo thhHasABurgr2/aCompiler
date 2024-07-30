@@ -26,9 +26,9 @@ void appendLine(lines* Lines,line* Line){
     Lines->stuff[Lines->len]=Line;
     Lines->len++;
 }
-void freeLines(lines Lines){
-    for (int i = 0; i < Lines.len; i++) {
-        free(Lines.stuff[i]);
+void freeLines(lines* Lines){
+    for (int i = 0; i < Lines->len; i++) {
+        free(Lines->stuff[i]);
     }
 }
 //token stuff now
@@ -83,9 +83,9 @@ int isFirstNum(Token* token){
     return 0;
 
 }
-void freeTokens(Tokens tokens){
-    for (int i = 0; i < tokens.len; i++) {
-        free(tokens.input[i]);
+void freeTokens(Tokens* tokens){
+    for (int i = 0; i < tokens->len; i++) {
+        free(tokens->input[i]);
     }
 }
 void Appendtoken(Tokens* tokens,Token* token){
@@ -108,6 +108,12 @@ typedef enum{
     SEMICOLON,
     NUMLITERAL,
 }TokenType;
+void printTokens(Tokens* tokens) {
+    for (int i = 0; i < tokens->len; i++) {
+        printf("Token %d: %s (Type: %d)\n", i, tokens->input[i]->input, tokens->input[i]->type);
+    }
+}
+
 void sortLine(line* Line){
     int count=0;
     states state=q0;
@@ -115,8 +121,43 @@ void sortLine(line* Line){
     Tokens tokens;
     initTokens(&tokens);
     Token* token=NULL;
-    while (character != '\0'){
+    while (1){
+       
+        character = (count < Line->len) ? Line->stuff[count] : '\0';
+        if (character == '\0') {
+        if (token != NULL) {
+           
+            switch (state) {
+                case q3:
+                    token->type = INDENTIFIER;
+                    break;
+                case q4:
+                    token->type = PLUS;
+                    break;
+                case q5:
+                    token->type = SEMICOLON;
+                    break;
+                case q6:
+                    token->type = NUMLITERAL;
+                    break;
+                default:
+                    free(token);
+                    token = NULL;
+                    break;
+            }
+            if (token != NULL) {
+                Appendtoken(&tokens, token);
+            }
+            token = NULL;
+        }
+        break; // End of input
+    }
+
+       
+
+       
         switch (state){
+            
             case q0:
                 if (isDigit(character)){
                     state = q2;
@@ -125,7 +166,7 @@ void sortLine(line* Line){
                     token->input[0] = character;
                     token->input[1] = '\0';  
                     token->len++;
-                    count++;
+                    
                 }else if (isPlus(character)){
                     state = q4;
                     token = (Token*)malloc(sizeof(Token));
@@ -133,7 +174,7 @@ void sortLine(line* Line){
                     token->input[0] = character;
                     token->input[1] = '\0';  
                     token->len++;
-                    count++;
+                    
                 }else if(isLetter(character)){
                     state = q1;
                     token = (Token*)malloc(sizeof(Token));
@@ -141,7 +182,7 @@ void sortLine(line* Line){
                     token->input[0] = character;
                     token->input[1] = '\0';  
                     token->len++;
-                    count++;
+                   
                 }else if(isSemicolon(character)){
                     state = q5;
                     token = (Token*)malloc(sizeof(Token));
@@ -149,7 +190,7 @@ void sortLine(line* Line){
                     token->input[0] = character;
                     token->input[1] = '\0';  
                     token->len++;
-                    count++;
+                 
                 }
                 else{
                     state=qerror;
@@ -159,16 +200,16 @@ void sortLine(line* Line){
             case q1:
                 if(isLetter(character)){
                     token->input[token->len]=character;
-                    token->input[token->len+1]=character;
+                    token->input[token->len+1]='\0';
                     token->len++;
-                    count++;
+                    
                 }
                 if(isDigit(character)){
                     state=q2;
                     token->input[token->len]=character;
-                    token->input[token->len+1]=character;
+                    token->input[token->len+1]='\0';
                     token->len++;
-                    count++;
+                   
                 }else if(isPlus(character)==1 || isSemicolon(character)==1){
                     state=q3;
 
@@ -182,35 +223,35 @@ void sortLine(line* Line){
                 int res=isFirstNum(token);
                 if(isDigit(character)){
                     token->input[token->len]=character;
-                    token->input[token->len+1]=character;
+                    token->input[token->len+1]='\0';
                     token->len++;
-                    count++;
+                    
 
                 }
                 if(isLetter(character)&&res!=1){
                     state=q1;
                     token->input[token->len]=character;
-                    token->input[token->len+1]=character;
+                    token->input[token->len+1]='\0';
                     token->len++;
-                    count++;
+                    
                     
 
                 }else{
-                    if (isPlus(character)==1||isSemicolon==1)
+                    if (isPlus(character)==1||isSemicolon(character)==1)
                     {
                         if (res==1)
                         {
                             state=q6;
                             token->input[token->len]=character;
-                            token->input[token->len+1]=character;
+                            token->input[token->len+1]='\0';
                             token->len++;
-                            count++;
+                           
                         }else{
                             state=q3;
                             token->input[token->len]=character;
-                            token->input[token->len+1]=character;
+                            token->input[token->len+1]='\0';
                             token->len++;
-                            count++;
+                            
                             
                         }
                         
@@ -247,17 +288,30 @@ void sortLine(line* Line){
                 break;
             case qerror:
                 fputs("U dumbass u gave me a char that wasn't supported go f yourself",stderr);
+                freeTokens(&tokens);
 
                 exit(1);
                 break;
+            default:
+                state=qerror;
+                break;
 
-        }
-        character=Line->stuff[count];
-        if(state==q3||state==q4||state==q5||state==q6){//saying that when a state has reached its accpeting state, reset it back to the initial state. prob a better way to do this
-            state=q0;
+        }if(character=='\0'){
+            break;
         }
         
-    }
-    freeTokens(tokens);
+
+  
+    
+
+        
+        count++;
+
+
+   
+}
+ printTokens(&tokens);
+ freeTokens(&tokens);
+
 }
 #endif

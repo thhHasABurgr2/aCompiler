@@ -59,10 +59,6 @@ int main(int argc,char* argv[]){
 
 
             Line=(line*)malloc(sizeof(line));
-            
-
-
-
         }else{
             if(Line != NULL){
                 appendChar(Line,countChar);
@@ -72,21 +68,11 @@ int main(int argc,char* argv[]){
                 initLine(Line);
                 appendChar(Line,countChar);
             }
-
-        
-            
-          
-        }
-
-
+        }   
+    }
+    sortLines(Lines.stuff[0]);
     
-        
-    }
-    for(int i=0;i<Lines.stuff[0]->len;i++){
-        putc(Lines.stuff[0]->stuff[i],stdout);
-
-    }
-    freeLines(Lines);
+    freeLines(&Lines);
     
 
     fclose(ptr);
