@@ -1,5 +1,6 @@
-#define MAXLENGTH 100
+#define MAXLENGTH 25
 #include<stdlib.h>
+#include<stdio.h>
 #ifndef TOKEN_H
 #define TOKEN_H
 typedef struct {
@@ -26,25 +27,33 @@ void appendLine(lines* Lines,line* Line){
     Lines->stuff[Lines->len]=Line;
     Lines->len++;
 }
-void freeLines(lines Lines){
-    for (int i = 0; i < Lines.len; i++) {
-        free(Lines.stuff[i]);
+void freeLines(lines* Lines){
+    for (int i = 0; i < Lines->len; i++) {
+        free(Lines->stuff[i]);
     }
 }
 //token stuff now
+typedef enum{
+    INDENTIFIER,
+    PLUS,
+    SEMICOLON,
+    NUMLITERAL,
+}TokenType;
 typedef struct{
     char input[MAXLENGTH];
     TokenType type;
     int len;
 }Token;
+
 typedef struct{
     Token* input[MAXLENGTH];
     int len;
  
 }Tokens;
+
 void initToken(Token* token){
     token->len=0;
-    token->type=NULL;
+    token->type=INDENTIFIER;
 }
 void initTokens(Tokens* tokens){
     tokens->len=0;
@@ -82,6 +91,15 @@ int isFirstNum(Token* token){
     return 0;
 
 }
+void freeTokens(Tokens* tokens){
+    for (int i = 0; i < tokens->len; i++) {
+        free(tokens->input[i]);
+    }
+}
+void Appendtoken(Tokens* tokens,Token* token){
+    tokens->input[tokens->len]=token;
+    tokens->len++;
+}
 typedef enum{
     q0,//start state
     q1,//on letter; can self loop, go to number, or go to identifier accepting state
@@ -92,108 +110,13 @@ typedef enum{
     q6,// num literal accepting state
     qerror,//dont recognize
 }states;
-typedef enum{
-    INDENTIFIER,
-    KEYWORD,
-    ESC,
-}TokenType;
-void sortLine(line* Line){
-    int count=0;
-    states state=q0;
-    int character=Line->stuff[count];
-    Tokens tokens;
-    initTokens(&tokens);
-    Token* token=NULL;
-    while (character != '\0'){
-        switch (state){
-            case q0:
-                if (isDigit(character)){
-                    state = q2;
-                    token = (Token*)malloc(sizeof(Token));
-                    token->input[0] = character;
-                    token->input[1] = '\0';  
-                    token->len = 1;
-                    count++;
-                }else if (isPlus(character)){
-                    state = q4;
-                    token = (Token*)malloc(sizeof(Token));
-                    token->input[0] = character;
-                    token->input[1] = '\0';  
-                    token->len = 1;
-                    count++;
-                }else if(isLetter(character)){
-                    state = q1;
-                    token = (Token*)malloc(sizeof(Token));
-                    token->input[0] = character;
-                    token->input[1] = '\0';  
-                    token->len = 1;
-                    count++;
-                }else if(isSemicolon(character)){
-                    state = q5;
-                    token = (Token*)malloc(sizeof(Token));
-                    token->input[0] = character;
-                    token->input[1] = '\0';  
-                    token->len = 1;
-                    count++;
-                }
-                else{
-                    state=qerror;
-                    
-                }
-                break;
-            case q1:
-                if(isLetter(character)){
-                    token->input[token->len]=character;
-                    token->input[token->len+1]=character;
-                    token->len++;
-                    count++;
-                }
-                if(isDigit(character)){
-                    state=q2;
-                    token->input[token->len]=character;
-                    token->input[token->len+1]=character;
-                    token->len++;
-                    count++;
-                }else if(isPlus(character)==1 || isSemicolon(character)==1){
-                    state=q3;
 
-                }else{
-                    state=qerror;
-                }
-                
-                break;
 
-            case q2:
-                int res=isFirstNum(token);
-                if(isDigit(character)){
-                    
 
-                }
-                if(isLetter(character)&&res!=1){
-                    state=q1;
 
-                }else{
-                    if (isPlus(character)==1||isSemicolon==1)
-                    {
-                        if (res==1)
-                        {
-                            state=q6;
-                        }else{
-                            state=q3;
-                        }
-                        
-                    }else{
-                        state=qerror;
-                    }
-                    
+void printToken(Token* token) {
+    printf("Token: %s (Type: %d)\n", token->input, token->type);
 
-                }
-                
-                break;
-            case q3:
-                break;
-        }
-        character=Line->stuff[count];
-    }
 }
+
 #endif
