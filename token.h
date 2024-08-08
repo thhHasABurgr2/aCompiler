@@ -3,7 +3,7 @@
 #include<stdio.h>
 #ifndef TOKEN_H
 #define TOKEN_H
-typedef struct {
+typedef struct Line {
     char stuff[MAXLENGTH];
     int len;
     struct Line* nextLine;
@@ -40,7 +40,7 @@ typedef enum{
     UNKNOWN,
     EMPTY
 }Type;
-typedef struct{
+typedef struct Token{
     char input[MAXLENGTH];
     Type type;
     int len;
@@ -301,7 +301,7 @@ Token* makeTokens(Line* line){
 
             case(qerror):
                 printf("inputted bad char");
-                freeTokens(&token1);
+                freeTokens(token1);
                 token1=NULL;
                 exit(1);
                 break;

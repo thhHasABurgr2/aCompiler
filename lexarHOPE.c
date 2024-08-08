@@ -30,7 +30,7 @@ int main(int argc,char* argv[]){
    
     Line* daHead;
     daHead=(Line*)malloc(sizeof(Line));
-    initLines(&daHead);
+    initLine(daHead);
 
     Line* line=daHead;
     
