@@ -62,16 +62,10 @@ int main(int argc,char* argv[]){
                 line = hold;
                 
             }
-<<<<<<< HEAD
-
-
-            Line=(line*)malloc(sizeof(line));
-=======
             
 
 
 
->>>>>>> 86ae948 (some struct issues)
         }else{
             if(line != NULL){
                 appendChar(line,countChar);
@@ -83,13 +77,10 @@ int main(int argc,char* argv[]){
             }
         }   
     }
-    sortLine(Lines.stuff[0]);
+   
     
-<<<<<<< HEAD
-    freeLines(&Lines);
-=======
         
-    }
+    
     while(daHead!=NULL){
         for(int i=0;i<daHead->len;i++){
             printf("%c",daHead->stuff[i]);
@@ -98,7 +89,6 @@ int main(int argc,char* argv[]){
         daHead=copy;
     }
     freeLines(daHead);
->>>>>>> 86ae948 (some struct issues)
     
 
     fclose(ptr);

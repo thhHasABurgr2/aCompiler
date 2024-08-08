@@ -20,22 +20,6 @@ void appendChar(Line* Line,int countChar){
     Line->stuff[Line->len]='\0';
 }
 // lines stuff
-<<<<<<< HEAD
-typedef struct {
-    line* stuff[MAXLENGTH];
-    int len;
-} lines;
-void initLines(lines* Lines){
-    Lines->len=0;
-}
-void appendLine(lines* Lines,line* Line){
-    Lines->stuff[Lines->len]=Line;
-    Lines->len++;
-}
-void freeLines(lines* Lines){
-    for (int i = 0; i < Lines->len; i++) {
-        free(Lines->stuff[i]);
-=======
 
 
 //atp i dont know if I even need a max length, but fuck it we ball
@@ -45,18 +29,10 @@ void freeLines(Line* head){
         Line* copy=hold->nextLine;
         free(hold);
         hold=copy;
->>>>>>> 86ae948 (some struct issues)
     }
 }
 //token stuff now
 typedef enum{
-<<<<<<< HEAD
-    INDENTIFIER,
-    PLUS,
-    SEMICOLON,
-    NUMLITERAL,
-}TokenType;
-=======
     IDENTIFIER,
     PLUS,
     SEMICOLON,
@@ -64,7 +40,6 @@ typedef enum{
     UNKNOWN,
     EMPTY
 }Type;
->>>>>>> 86ae948 (some struct issues)
 typedef struct{
     char input[MAXLENGTH];
     Type type;
@@ -73,20 +48,6 @@ typedef struct{
     struct Token* nextToken;
 }Token;
 
-<<<<<<< HEAD
-typedef struct{
-    Token* input[MAXLENGTH];
-    int len;
- 
-}Tokens;
-
-void initToken(Token* token){
-    token->len=0;
-    token->type=INDENTIFIER;
-}
-void initTokens(Tokens* tokens){
-    tokens->len=0;
-=======
 
 
 void initToken(Token* token){
@@ -94,7 +55,6 @@ void initToken(Token* token){
     token->type=UNKNOWN;
     token->nextToken=NULL;
     token->finalized=0;
->>>>>>> 86ae948 (some struct issues)
 }
 
 //check stuff
@@ -130,17 +90,6 @@ int isFirstNum(Token* token){
     return 0;
 
 }
-<<<<<<< HEAD
-void freeTokens(Tokens* tokens){
-    for (int i = 0; i < tokens->len; i++) {
-        free(tokens->input[i]);
-    }
-}
-void Appendtoken(Tokens* tokens,Token* token){
-    tokens->input[tokens->len]=token;
-    tokens->len++;
-}
-=======
 void freeTokens(Token* head){
     Token* hold=head;
     while(hold!=NULL){
@@ -150,7 +99,6 @@ void freeTokens(Token* head){
     }
 }
 
->>>>>>> 86ae948 (some struct issues)
 typedef enum{
     q0,//start state
     q1,//on letter; can self loop, go to number, or go to identifier accepting state
@@ -162,15 +110,6 @@ typedef enum{
     q7,// state for an empty input
     qerror,//dont recognize
 }states;
-<<<<<<< HEAD
-
-
-
-
-void printToken(Token* token) {
-    printf("Token: %s (Type: %d)\n", token->input, token->type);
-
-=======
 
 
 
@@ -376,7 +315,6 @@ Token* makeTokens(Line* line){
     
     }
     return token1;
->>>>>>> 86ae948 (some struct issues)
 }
 
 #endif
