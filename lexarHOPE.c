@@ -28,10 +28,11 @@ int main(int argc,char* argv[]){
     FILE* ptr;
 
    
-    lines Lines;
-    initLines(&Lines);
+    Line* daHead;
+    daHead=(Line*)malloc(sizeof(Line));
+    initLines(&daHead);
 
-    line* Line=NULL;
+    Line* line=daHead;
     
 
     
@@ -50,29 +51,54 @@ int main(int argc,char* argv[]){
         if (countChar == ' '){
             continue;
         }else if(countChar=='\n'){
-            if(Line==NULL){
+            if(line==NULL){
                 continue;
             }
-            if(Line!=NULL){
-                appendLine(&Lines,Line);
+            if(line!=NULL){
+                Line* hold;
+                hold=(Line*)malloc(sizeof(Line));
+                initLine(hold);
+                line->nextLine=hold;
+                line = hold;
+                
             }
+<<<<<<< HEAD
 
 
             Line=(line*)malloc(sizeof(line));
+=======
+            
+
+
+
+>>>>>>> 86ae948 (some struct issues)
         }else{
-            if(Line != NULL){
-                appendChar(Line,countChar);
+            if(line != NULL){
+                appendChar(line,countChar);
 
             }else{
-                Line=(line*)malloc(sizeof(line));
-                initLine(Line);
-                appendChar(Line,countChar);
+                line=(Line*)malloc(sizeof(Line));
+                initLine(line);
+                appendChar(line,countChar);
             }
         }   
     }
     sortLine(Lines.stuff[0]);
     
+<<<<<<< HEAD
     freeLines(&Lines);
+=======
+        
+    }
+    while(daHead!=NULL){
+        for(int i=0;i<daHead->len;i++){
+            printf("%c",daHead->stuff[i]);
+        }
+        Line* copy=daHead->nextLine;
+        daHead=copy;
+    }
+    freeLines(daHead);
+>>>>>>> 86ae948 (some struct issues)
     
 
     fclose(ptr);
