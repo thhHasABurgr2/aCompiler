@@ -40,10 +40,10 @@ typedef enum{
     UNKNOWN,
     EMPTY,
     EQUAL,
-}Type;
+}Lexeme;
 typedef struct Token{
     char input[MAXLENGTH];
-    Type type;
+    Lexeme type;
     int len;
     int finalized;
     struct Token* nextToken;
