@@ -26,6 +26,7 @@ closedStatement= openPar statement closedPar
 int main(int argc,char* argv[]){
     int countChar=0;
     FILE* ptr;
+    FILE* outp;
 
     
     Line* daHead;
@@ -39,6 +40,8 @@ int main(int argc,char* argv[]){
  
 
     ptr=fopen(argv[1],"r");
+    outp=fopen("outLex.tokens","w");
+
     if(NULL==ptr){
         printf("file cant be open sadge");
     }
@@ -92,7 +95,7 @@ int main(int argc,char* argv[]){
         }
         fputc('\n',stdout);*/
         tracker=makeTokens(daHead);
-        printToken(tracker);
+        printToken(tracker,outp);
         Line* copy=daHead->nextLine;
         daHead=copy;
   

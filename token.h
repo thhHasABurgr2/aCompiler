@@ -107,12 +107,7 @@ void freeToken(Token* head){
     
 }
 
-void freeTokens(Token** head, int count) {
-    for (int i = 0; i < count; i++) {
-        freeToken(head[i]);
-    }
-    free(head);
-}
+
 
 typedef enum{
     q0,//start state
@@ -130,12 +125,13 @@ typedef enum{
 
 
 
-void printToken(Token* token) {
+void printToken(Token* token,FILE* OUT) {
     Token* cpy=token;
     while(cpy!=NULL){
-        printf("Token: %s (Type: %d)\n", cpy->input, cpy->type);
+        fprintf(OUT,"Token: %s (Type: %d)\n", cpy->input, cpy->type);
         cpy=cpy->nextToken;
     }
+    
 
 }
 
