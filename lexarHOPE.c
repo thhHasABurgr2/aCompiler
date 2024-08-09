@@ -27,7 +27,7 @@ int main(int argc,char* argv[]){
     int countChar=0;
     FILE* ptr;
 
-   
+    
     Line* daHead;
     daHead=(Line*)malloc(sizeof(Line));
     initLine(daHead);
@@ -38,14 +38,14 @@ int main(int argc,char* argv[]){
     
  
 
-    ptr=fopen("exe.toyYEHE","r");
+    ptr=fopen(argv[1],"r");
     if(NULL==ptr){
         printf("file cant be open sadge");
     }
 
-    while (countChar != EOF){
+    while ((countChar=getc(ptr)) != EOF){
         
-        countChar=getc(ptr);
+       
 
 
         if (countChar == ' '){
@@ -76,19 +76,34 @@ int main(int argc,char* argv[]){
                 appendChar(line,countChar);
             }
         }   
+        
     }
+    
    
     
         
+    Token* head= (Token*) malloc(sizeof(Token));
+    Token* tracker=head;
     
+
     while(daHead!=NULL){
-        for(int i=0;i<daHead->len;i++){
+        /*for(int i=0;i<daHead->len;i++){
             printf("%c",daHead->stuff[i]);
         }
+        fputc('\n',stdout);*/
+        tracker=makeTokens(daHead);
+        printToken(tracker);
         Line* copy=daHead->nextLine;
         daHead=copy;
+  
+        
+        
+        
+        
+        
     }
     freeLines(daHead);
+    freeToken(head);
     
 
     fclose(ptr);

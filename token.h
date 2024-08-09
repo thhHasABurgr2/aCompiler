@@ -38,7 +38,8 @@ typedef enum{
     SEMICOLON,
     NUMLITERAL,
     UNKNOWN,
-    EMPTY
+    EMPTY,
+    EQUAL,
 }Type;
 typedef struct Token{
     char input[MAXLENGTH];
@@ -82,6 +83,12 @@ int isSemicolon(int input){
     }
     return 0;
 }
+int isEqual(int input){
+    if (input == 61){
+        return 1;
+    }
+    return 0;
+}
 int isFirstNum(Token* token){
     char inp=token->input[0];
     if(isDigit((int)inp)){
@@ -90,13 +97,21 @@ int isFirstNum(Token* token){
     return 0;
 
 }
-void freeTokens(Token* head){
+void freeToken(Token* head){
     Token* hold=head;
     while(hold!=NULL){
         Token* copy=hold->nextToken;
         free(hold);
         hold=copy;
     }
+    
+}
+
+void freeTokens(Token** head, int count) {
+    for (int i = 0; i < count; i++) {
+        freeToken(head[i]);
+    }
+    free(head);
 }
 
 typedef enum{
@@ -108,6 +123,7 @@ typedef enum{
     q5, // semicolon accepting state
     q6,// num literal accepting state
     q7,// state for an empty input
+    q8,//= accpeting state
     qerror,//dont recognize
 }states;
 
@@ -115,7 +131,11 @@ typedef enum{
 
 
 void printToken(Token* token) {
-    printf("Token: %s (Type: %d)\n", token->input, token->type);
+    Token* cpy=token;
+    while(cpy!=NULL){
+        printf("Token: %s (Type: %d)\n", cpy->input, cpy->type);
+        cpy=cpy->nextToken;
+    }
 
 }
 
@@ -123,6 +143,7 @@ void appendCharToToken(Token* tokens,char nextc){
     tokens->input[tokens->len]=nextc; 
     tokens->input[tokens->len+1]='\0';
     tokens->len++;
+
 }
 
 Token* makeTokens(Line* line){
@@ -137,7 +158,7 @@ Token* makeTokens(Line* line){
 
     while(1){
         
-        if(nextc=='\0' && token->finalized){
+        if(nextc=='\0' && token->finalized==1){
             break;
         }
         
@@ -170,10 +191,16 @@ Token* makeTokens(Line* line){
                 }else if(nextc=='\0'){
                     state=q7;
 
-                }else{
+                }else if(isEqual(nextc)){
+                    state=q8;
+                    appendCharToToken(token,nextc);
+                    tracker++;
+                    nextc=*tracker;
+                }
+                else{
                     state=qerror;
                 }
-                
+               
                 break;
             case(q1):
                 if(isLetter(nextc)){
@@ -193,9 +220,12 @@ Token* makeTokens(Line* line){
                     state=q3;
                 }else if(nextc=='\0'){
                     state=q3;
+                }else if(isEqual(nextc)){
+                    state=q8;
                 }else{
                     state=qerror;
                 }
+                
                 break;
 
             case(q2):
@@ -228,6 +258,12 @@ Token* makeTokens(Line* line){
                     }else{
                         state=q3;
                     }
+                }else if(isEqual(nextc)){
+                    if(B==1){
+                        state=q6;
+                    }else{
+                        state=q3;
+                    }
                 }else if(nextc=='\0'){
                     if(B==1){
                         state=q6;
@@ -241,19 +277,20 @@ Token* makeTokens(Line* line){
                 break;
               
             case(q3):
-              
+                state=q0;
                 token->type=IDENTIFIER;
                 token->finalized=1;
+               
                 if(nextc!='\0'){
-                 
-                    Token* hold;
-                    hold=(Token*)malloc(sizeof(Token));
-                    initToken(hold);
-                    token->nextToken=hold;
-                    token = hold;
+                   
+                    
+                    token->nextToken=(Token*)malloc(sizeof(Token));
+                    initToken(token->nextToken);
+                    token=token->nextToken;
                 }
                 break;
             case(q4):
+                state=q0;
                 token->type=PLUS;
                 token->finalized=1;
                 if(nextc!='\0'){
@@ -269,6 +306,7 @@ Token* makeTokens(Line* line){
 
 
             case(q5):
+                state=q0;
                 token->type=SEMICOLON;
                 token->finalized=1;
                 if(nextc!='\0'){
@@ -283,6 +321,7 @@ Token* makeTokens(Line* line){
 
 
             case(q6):
+                state=q0;
                 token->type=NUMLITERAL;
                 token->finalized=1;
                 if(nextc!='\0'){
@@ -295,13 +334,30 @@ Token* makeTokens(Line* line){
                 }
                 break;
             case(q7):
+                state=q0;
                 token->type=EMPTY;
                 token->finalized=1;
                 break;
+            case(q8):
+                state=q0;
+                token->type=EQUAL;
+                
+                token->finalized=1;
+                if(nextc!='\0'){
+                 
+                    Token* hold;
+                    hold=(Token*)malloc(sizeof(Token));
+                    initToken(hold);
+                    token->nextToken=hold;
+                    token = hold;
+                }
+                break;
+               
+
 
             case(qerror):
-                printf("inputted bad char");
-                freeTokens(token1);
+                printf("inputted bad char: %c",nextc);
+                freeToken(token1);
                 token1=NULL;
                 exit(1);
                 break;
@@ -311,6 +367,7 @@ Token* makeTokens(Line* line){
         
         
         }
+        
         
     
     }
