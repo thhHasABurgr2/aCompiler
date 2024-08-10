@@ -110,5 +110,6 @@ int main(int argc,char* argv[]){
     
 
     fclose(ptr);
+    fclose(outp);
 
 }
