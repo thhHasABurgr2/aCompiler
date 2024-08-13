@@ -72,6 +72,7 @@ void initToken(Token* token){
     token->finalized=0;
 }
 
+
 //check stuff
 int isDigit(int input){
     if (input<=57 &&input>=48){
@@ -384,4 +385,50 @@ Token* makeTokens(Line* line){
     return token1;
 }
 
+/*
+Ideas to make this better; after I finish table delta func thing imma copy from the web on how to make this better I realized that adding new words the lexar can process 
+is rlly clunky
+state num should be ~ 10
+#define NUMOFSTATES 10
+token:
+char* inp;
+token* nextToken;
+Type(is enum) type(IDENTIFIER, KEYWORD that sort of thing);
+state currentState
+I suppose this is the delta func. it would take current state and nextChar(not automatically appended to token->inp) and try to determine a valid func]
+// No I suppose it would be reasonable to say that this table is a table of func* deltaFuncs
+
+so 
+deltaTable:
+cell cells[NUMOFSTATE][NUMSOFSTATE]
+
+cell:
+state(*Deltafunc)(state,char,*token)// deltaFunc for that cell
+state initState
+//i feel like the cell really shouldnt concern the token. We are influencing the state and when we find the correct state to go to, we can make the choice of appending nextChar to token->inp
+
+
+
+for the hash func we can use dbj2 
+    unsigned long
+    hash(unsigned char *str)
+    {
+        unsigned long hash = 5381;
+        int c;
+
+        while (c = *str++)
+            hash = ((hash << 5) + hash) + c; 
+
+       // return hash%tableSize;
+       tableSize is how many keywords we have
+  //  }
+  Ill prob implement hashTable in a separate file
+    
+
+
+
+
+
+
+*/
 #endif
