@@ -1,4 +1,5 @@
 #define MAXLENGTH 25
+#define NUMSTATES 11
 #include<stdlib.h>
 #include<stdio.h>
 #ifndef TOKEN_H
@@ -73,31 +74,31 @@ void initToken(Token* token){
 }
 
 //check stuff
-int isDigit(int input){
+int isDigit(char input){
     if (input<=57 &&input>=48){
         return 1;
     }
     return 0;
 }
-int isLetter(int input){
+int isLetter(char input){
     if ((input>=65 && input <=90) || (input >= 97 && input <=122)){
         return 1;
     }
     return 0;
 }
-int isPlus(int input){
+int isPlus(char input){
     if (input == 43){
         return 1;
     }
     return 0;
 }
-int isSemicolon(int input){
+int isSemicolon(char input){
     if (input == 59){
         return 1;
     }
     return 0;
 }
-int isEqual(int input){
+int isEqual(char input){
     if (input == 61){
         return 1;
     }
@@ -136,7 +137,79 @@ typedef enum{
     qerror,//dont recognize
 }states;
 
+typedef struct deltaCell{
+    states vert;//determines func
+    states hori;// our actual state
+    void (*deltaFunc)(char* nextChar,struct deltaCell* pos,Token* token);
+    
+}deltaCell;
+void q0q0(char* nextc, deltaCell* mouse,Token* token){
+    // this is for the transition q0->q2->any
+    if(isDigit(*nextc)){
+        mouse->vert=q2;
+        mouse->deltaFunc=q1q0;
+        appendCharToToken(token,*nextc);
+    }else if (isLetter(*nextc))
+    {
+        mouse->vert=q1;
+        appendCharToToken(token,*nextc);
+    }else if (isEqual(*nextc)){       
+        mouse->vert=q8;
+        appendCharToToken(token,*nextc);
+    }else if (isPlus(*nextc)){
+        mouse->vert=q4;
+        appendCharToToken(token,*nextc);
+    }else if (isSemicolon(*nextc)){
+        mouse->vert=q5;
+        appendCharToToken(token,*nextc);
+    }
+    
+}
+deltaCell* stateTable[11][11];
+// lazy alloc? so the stateTable will be filled at the same time mouse is calling a func
+void lazyInit(deltaCell* stateTable[11][11], void(*deltaFunc)(char nextc, deltaCell* pos,Token* token) ){
+    
+}
+Token* mouseRUN(Line* line){
+    Token* token1;
+    token1=(Token*)malloc(sizeof(Token));
+    initToken(token1);
+    Token* token=token1;
+    char* tracker=line->stuff;
+    char nextc=*tracker; 
+    states state = q0;
+    
+    deltaCell* mouse =(deltaCell*)malloc(sizeof(deltaCell));
+    stateTable[q0][q0]=(deltaCell*)malloc(sizeof(deltaCell));
+    stateTable[q0][q0]->vert=q0;
+    stateTable[q0][q0]->hori=q0;
+    stateTable[q0][q0]->deltaFunc=q0q0;
+    mouse=stateTable[q0][q0];
+    
+    
+  
 
+
+    while(nextc!='\0'&& token->finalized != 1){
+        mouse->deltaFunc(nextc,mouse,token);
+
+    }
+}
+/*
+
+q0 q1 q2 q3 q4 -outp ofdeltafunc?
+
+q1 q1 q2 q4 NULL - reaason why this is null is that u cant go from q1->q4
+
+q2 q1 q2 q4 NULL - same reason as q1's but there's a prob. What 8f the sequence is q0->q2->q1. that doessnt work
+-one way to fix would be that q2's q1 is diff than q1's self loop;
+- so like q0->q2 and deltaFunc has a var that tracks token->input to see
+q3
+
+q4
+-mouse cell
+
+*/
 
 
 void printToken(Token* token,FILE* OUT) {
