@@ -1,4 +1,4 @@
-#define TABLESIZE 7
+#define TABLESIZE 31
 #include<stdlib.h>
 #include<string.h>
 #include<stdio.h>

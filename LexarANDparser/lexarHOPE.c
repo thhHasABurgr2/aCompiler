@@ -18,7 +18,7 @@ closedStatement= openPar statement closedPar
 */
 #include<stdio.h>
 #include<stdlib.h>
-#include "token.h"
+#include "Line.h"
 
 
 
@@ -26,7 +26,7 @@ closedStatement= openPar statement closedPar
 int main(int argc,char* argv[]){
     int countChar=0;
     FILE* ptr;
-    FILE* outp;
+   // FILE* outp;
 
     
     Line* daHead;
@@ -40,7 +40,7 @@ int main(int argc,char* argv[]){
  
 
     ptr=fopen(argv[1],"r");
-    outp=fopen("outLex.tokens","w");
+    //outp=fopen("outLex.tokens","w");
 
     if(NULL==ptr){
         printf("file cant be open sadge");
@@ -72,12 +72,12 @@ int main(int argc,char* argv[]){
 
         }else{
             if(line != NULL){
-                appendChar(line,countChar);
+                appendCharToLine(line,countChar);
 
             }else{
                 line=(Line*)malloc(sizeof(Line));
                 initLine(line);
-                appendChar(line,countChar);
+                appendCharToLine(line,countChar);
             }
         }   
         
@@ -86,15 +86,12 @@ int main(int argc,char* argv[]){
    
     
         
-    Token* head= (Token*) malloc(sizeof(Token));
+  /*  Token* head= (Token*) malloc(sizeof(Token));
     Token* tracker=head;
     
 
     while(daHead!=NULL){
-        /*for(int i=0;i<daHead->len;i++){
-            printf("%c",daHead->stuff[i]);
-        }
-        fputc('\n',stdout);*/
+       
         tracker=makeTokens(daHead);
         printToken(tracker,outp);
         Line* copy=daHead->nextLine;
@@ -106,11 +103,12 @@ int main(int argc,char* argv[]){
         
         
     }
-    freeLines(daHead);
-    freeToken(head);
     
-
+    freeToken(head);
+ */   
+    printLines(daHead);
+    freeLines(daHead);
     fclose(ptr);
-    fclose(outp);
+    //fclose(outp);
 
 }
