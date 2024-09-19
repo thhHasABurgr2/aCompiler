@@ -1,2 +1,2 @@
-# practiceprojUHtoycompiler
-practice proj toy compiler
+# aCompiler
+Trying to learn compiler basics
